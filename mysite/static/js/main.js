@@ -20,11 +20,14 @@ document.addEventListener('DOMContentLoaded', function() {
         left: 0;
         right: 0;
         bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
         opacity: 0;
         visibility: hidden;
         transition: all 0.3s ease;
-        z-index: 998;
+        z-index: 9999;
+        -webkit-tap-highlight-color: transparent;
     `;
     document.body.appendChild(menuOverlay);
 

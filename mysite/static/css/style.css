@@ -249,7 +249,8 @@ body {
     border-radius: var(--radius-md);
     transition: var(--transition-base);
     -webkit-tap-highlight-color: transparent;
-    z-index: 1001;
+    position: relative;
+    z-index: 10002;
 }
 
 .mobile-menu-toggle:hover,
@@ -2083,9 +2084,12 @@ body {
 
     /* Middle navbar mobile layout */
     .navbar-middle {
-        position: sticky;
+        position: fixed !important;
         top: 0;
-        z-index: 1000;
+        left: 0;
+        right: 0;
+        z-index: 10000;
+        background: var(--white);
     }
 
     .navbar-middle-content {
@@ -2096,16 +2100,19 @@ body {
 
     .navbar-logo {
         flex-shrink: 0;
+        z-index: 10002;
     }
 
     .navbar-logo img {
-        max-height: 50px;
+        max-height: 45px;
         width: auto;
     }
 
     /* Mobile menu toggle button */
     .mobile-menu-toggle {
         display: flex !important;
+        position: relative;
+        z-index: 10002;
     }
 
     /* Mobile menu panel */
@@ -2115,14 +2122,17 @@ body {
         left: 0;
         right: 0;
         bottom: 0;
+        width: 100%;
+        height: 100vh;
         background: var(--white);
         flex-direction: column;
         align-items: stretch;
-        padding: 80px 1.5rem 2rem;
+        justify-content: flex-start;
+        padding: 100px 2rem 2rem;
         transform: translateX(-100%);
         transition: transform 0.3s ease-in-out;
         overflow-y: auto;
-        z-index: 999;
+        z-index: 10001;
         box-shadow: var(--shadow-2xl);
         visibility: hidden;
     }
@@ -2130,6 +2140,11 @@ body {
     .navbar-middle-menu.active {
         transform: translateX(0);
         visibility: visible;
+    }
+
+    /* Add padding to body to account for fixed header */
+    body {
+        padding-top: 70px;
     }
 
     /* Mobile menu links */
@@ -2861,5 +2876,38 @@ body {
 
     .sitemap-column-heading {
         font-size: 1rem;
+    }
+}
+
+/* ============================================
+   DESKTOP RESET - Ensure mobile styles don't affect desktop
+   ============================================ */
+@media (min-width: 993px) {
+    body {
+        padding-top: 0 !important;
+    }
+
+    .navbar-middle {
+        position: sticky !important;
+    }
+
+    .mobile-menu-toggle {
+        display: none !important;
+    }
+
+    .navbar-middle-menu {
+        position: static !important;
+        transform: none !important;
+        visibility: visible !important;
+        height: auto !important;
+        width: auto !important;
+        padding: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        overflow: visible !important;
+    }
+
+    .mobile-menu-overlay {
+        display: none !important;
     }
 }

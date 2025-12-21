@@ -11,43 +11,82 @@ document.addEventListener('DOMContentLoaded', function() {
     const mobileMenuToggle = document.getElementById('mobileMenuToggle');
     const navbarMenu = document.getElementById('navbarMenu') || document.getElementById('navbarMiddleMenu');
 
+    // Create overlay for mobile menu
+    const menuOverlay = document.createElement('div');
+    menuOverlay.className = 'mobile-menu-overlay';
+    menuOverlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        z-index: 998;
+    `;
+    document.body.appendChild(menuOverlay);
+
+    function openMobileMenu() {
+        if (navbarMenu) {
+            navbarMenu.classList.add('active');
+            menuOverlay.style.opacity = '1';
+            menuOverlay.style.visibility = 'visible';
+            document.body.style.overflow = 'hidden';
+
+            const icon = mobileMenuToggle.querySelector('i');
+            icon.classList.remove('fa-bars');
+            icon.classList.add('fa-times');
+        }
+    }
+
+    function closeMobileMenu() {
+        if (navbarMenu) {
+            navbarMenu.classList.remove('active');
+            menuOverlay.style.opacity = '0';
+            menuOverlay.style.visibility = 'hidden';
+            document.body.style.overflow = '';
+
+            const icon = mobileMenuToggle.querySelector('i');
+            icon.classList.remove('fa-times');
+            icon.classList.add('fa-bars');
+        }
+    }
+
     if (mobileMenuToggle && navbarMenu) {
-        mobileMenuToggle.addEventListener('click', function() {
-            navbarMenu.classList.toggle('active');
-            document.body.style.overflow = navbarMenu.classList.contains('active') ? 'hidden' : '';
-
-            const icon = this.querySelector('i');
+        mobileMenuToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
             if (navbarMenu.classList.contains('active')) {
-                icon.classList.remove('fa-bars');
-                icon.classList.add('fa-times');
+                closeMobileMenu();
             } else {
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
+                openMobileMenu();
             }
         });
 
-        // Close menu when clicking outside
-        document.addEventListener('click', function(event) {
-            const isClickInsideMenu = navbarMenu.contains(event.target);
-            const isClickOnToggle = mobileMenuToggle.contains(event.target);
+        // Close menu when clicking overlay
+        menuOverlay.addEventListener('click', closeMobileMenu);
 
-            if (!isClickInsideMenu && !isClickOnToggle && navbarMenu.classList.contains('active')) {
-                navbarMenu.classList.remove('active');
-                document.body.style.overflow = '';
-                const icon = mobileMenuToggle.querySelector('i');
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-            }
+        // Close menu when clicking a link
+        navbarMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', function() {
+                if (window.innerWidth <= 992) {
+                    closeMobileMenu();
+                }
+            });
         });
 
-        // Close menu when window is resized
+        // Close menu when window is resized to desktop
         window.addEventListener('resize', function() {
             if (window.innerWidth > 992 && navbarMenu.classList.contains('active')) {
-                navbarMenu.classList.remove('active');
-                document.body.style.overflow = '';
-                const icon = mobileMenuToggle.querySelector('i');
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
+                closeMobileMenu();
+            }
+        });
+
+        // Handle escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && navbarMenu.classList.contains('active')) {
+                closeMobileMenu();
             }
         });
     }

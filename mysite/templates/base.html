@@ -16,7 +16,36 @@
     </title>
     {% if page.search_description %}
     <meta name="description" content="{{ page.search_description }}" />
+    {% else %}
+    <meta name="description" content="Qualitation - The British Quality Centre. Expert ISO certification consultants with 100% first-time certification success rate. ISO 9001, 14001, 45001, 27001 and more." />
     {% endif %}
+
+    {# Favicon #}
+    <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}" />
+    <link rel="apple-touch-icon" href="{% static 'images/apple-touch-icon.png' %}" />
+
+    {# Open Graph Meta Tags for Social Sharing #}
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Qualitation - The British Quality Centre" />
+    <meta property="og:title" content="{% if page.seo_title %}{{ page.seo_title }}{% else %}{{ page.title }}{% endif %} | Qualitation" />
+    <meta property="og:description" content="{% if page.search_description %}{{ page.search_description }}{% else %}Expert ISO certification consultants with 100% first-time certification success rate. ISO 9001, 14001, 45001, 27001 and more.{% endif %}" />
+    <meta property="og:url" content="{{ request.build_absolute_uri }}" />
+    <meta property="og:image" content="{% static 'images/og-image.png' %}" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en_GB" />
+
+    {# Twitter Card Meta Tags #}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{% if page.seo_title %}{{ page.seo_title }}{% else %}{{ page.title }}{% endif %} | Qualitation" />
+    <meta name="twitter:description" content="{% if page.search_description %}{{ page.search_description }}{% else %}Expert ISO certification consultants with 100% first-time certification success rate. ISO 9001, 14001, 45001, 27001 and more.{% endif %}" />
+    <meta name="twitter:image" content="{% static 'images/og-image.png' %}" />
+
+    {# Additional SEO Meta Tags #}
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="Qualitation Ltd" />
+    <meta name="keywords" content="ISO certification, ISO 9001, ISO 14001, ISO 45001, ISO 27001, quality management, certification consultants, UK" />
+    <link rel="canonical" href="{{ request.build_absolute_uri }}" />
 
     {# Force all links in the live preview panel to be opened in a new tab #}
     {% if request.in_preview_panel %}

@@ -126,6 +126,31 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // ============================================
+    // MOBILE ISO DROPDOWN TOGGLES
+    // ============================================
+    const mobileIsoItems = document.querySelectorAll('.mobile-iso-item.has-dropdown');
+
+    mobileIsoItems.forEach(item => {
+        const link = item.querySelector('a');
+
+        if (link) {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                // Close other dropdowns
+                mobileIsoItems.forEach(otherItem => {
+                    if (otherItem !== item) {
+                        otherItem.classList.remove('dropdown-open');
+                    }
+                });
+
+                // Toggle current dropdown
+                item.classList.toggle('dropdown-open');
+            });
+        }
+    });
+
+    // ============================================
     // SMOOTH SCROLLING
     // ============================================
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {

@@ -2147,6 +2147,28 @@ body {
         padding-top: 70px;
     }
 
+    /* Mobile phone link at top */
+    .mobile-phone-link {
+        display: block;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--primary-blue);
+    }
+
+    .mobile-phone-link a {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--primary-blue);
+        text-decoration: none;
+    }
+
+    .mobile-phone-link i {
+        font-size: 1rem;
+    }
+
     /* Mobile menu links */
     .navbar-middle-links {
         flex-direction: column;
@@ -2164,6 +2186,89 @@ body {
         display: block;
         font-size: 1.1rem;
         font-weight: 500;
+        color: var(--text-dark);
+    }
+
+    /* Mobile ISO Standards Section */
+    .mobile-iso-section,
+    .mobile-quick-section {
+        display: block;
+        margin-bottom: 1.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--medium-gray);
+    }
+
+    .mobile-section-title {
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--text-light);
+        margin-bottom: 0.8rem;
+    }
+
+    .mobile-iso-links,
+    .mobile-quick-links {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .mobile-iso-item,
+    .mobile-quick-links li {
+        border-bottom: 1px solid var(--light-gray);
+    }
+
+    .mobile-iso-item > a,
+    .mobile-quick-links li a {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.8rem 0;
+        font-size: 1rem;
+        color: var(--text-dark);
+        text-decoration: none;
+    }
+
+    .mobile-iso-item > a i {
+        font-size: 0.75rem;
+        transition: transform 0.3s ease;
+    }
+
+    .mobile-iso-item.dropdown-open > a i {
+        transform: rotate(180deg);
+    }
+
+    /* Mobile dropdown */
+    .mobile-dropdown {
+        display: none;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        background: var(--light-gray);
+        border-radius: var(--radius-md);
+        margin-bottom: 0.5rem;
+    }
+
+    .mobile-iso-item.dropdown-open .mobile-dropdown {
+        display: block;
+    }
+
+    .mobile-dropdown li a {
+        display: block;
+        padding: 0.7rem 1rem;
+        font-size: 0.95rem;
+        color: var(--text-dark);
+        text-decoration: none;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .mobile-dropdown li:last-child a {
+        border-bottom: none;
+    }
+
+    .mobile-dropdown li a:hover {
+        background: rgba(0,0,0,0.05);
     }
 
     /* Mobile menu action buttons */
@@ -2908,6 +3013,13 @@ body {
     }
 
     .mobile-menu-overlay {
+        display: none !important;
+    }
+
+    /* Hide mobile-only sections on desktop */
+    .mobile-phone-link,
+    .mobile-iso-section,
+    .mobile-quick-section {
         display: none !important;
     }
 }

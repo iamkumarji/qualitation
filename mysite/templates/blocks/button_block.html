@@ -1,0 +1,12 @@
+{% load wagtailcore_tags %}
+
+<section class="button-block">
+    <div class="container">
+        <div class="button-wrapper text-{{ value.alignment }}">
+            <a href="{% if value.link_page %}{% pageurl value.link_page %}{% else %}{{ value.link_url }}{% endif %}"
+               class="btn btn-{{ value.style }}">
+                {{ value.text }}
+            </a>
+        </div>
+    </div>
+</section>

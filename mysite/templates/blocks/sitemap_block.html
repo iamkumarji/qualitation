@@ -1,0 +1,36 @@
+{% load wagtailcore_tags %}
+
+<section class="sitemap-section sitemap-{{ value.background_style }}">
+    <div class="container">
+        {% if value.show_heading and value.heading %}
+        <h2 class="sitemap-heading">{{ value.heading }}</h2>
+        {% endif %}
+
+        <div class="sitemap-grid" style="--columns: {{ value.columns|length }}">
+            {% for column in value.columns %}
+            <div class="sitemap-column">
+                <h3 class="sitemap-column-heading">{{ column.heading }}</h3>
+                <ul class="sitemap-links">
+                    {% for link in column.links %}
+                    <li class="sitemap-link-item">
+                        {% if link.page %}
+                        <a href="{% pageurl link.page %}">
+                            <span class="link-icon"><i class="fas fa-chevron-right"></i></span>
+                            {{ link.title }}
+                        </a>
+                        {% elif link.url %}
+                        <a href="{{ link.url }}">
+                            <span class="link-icon"><i class="fas fa-chevron-right"></i></span>
+                            {{ link.title }}
+                        </a>
+                        {% else %}
+                        <span class="sitemap-text">{{ link.title }}</span>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>

@@ -1,0 +1,21 @@
+{% load wagtailcore_tags %}
+
+<section class="accordion-block">
+    <div class="container">
+        <div class="accordion">
+            {% for item in value.items %}
+            <div class="accordion-item">
+                <button class="accordion-header" type="button">
+                    {{ item.title }}
+                    <i class="fas fa-chevron-down accordion-icon"></i>
+                </button>
+                <div class="accordion-content">
+                    <div class="accordion-body">
+                        {{ item.content|richtext }}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>

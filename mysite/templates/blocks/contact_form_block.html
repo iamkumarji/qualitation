@@ -1,0 +1,34 @@
+<section class="contact-form-section bg-{{ value.background_color }}">
+    <div class="container">
+        <div class="contact-form-wrapper">
+            <div class="contact-info">
+                {% if value.heading %}
+                <h2>{{ value.heading }}</h2>
+                {% endif %}
+                {% if value.subheading %}
+                <p>{{ value.subheading }}</p>
+                {% endif %}
+            </div>
+            <div class="contact-form">
+                <h3>Want to stay in the know?</h3>
+                <form method="post" class="subscription-form">
+                    {% csrf_token %}
+                    <div class="form-row">
+                        <input type="text" name="name" placeholder="Name" class="form-input" required>
+                        <input type="email" name="email" placeholder="Email" class="form-input" required>
+                    </div>
+                    <div class="form-row">
+                        <input type="tel" name="phone" placeholder="Phone" class="form-input">
+                        <input type="text" name="company" placeholder="Company" class="form-input">
+                    </div>
+                    <div class="form-row">
+                        <textarea name="message" placeholder="Message" class="form-textarea" rows="4"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>

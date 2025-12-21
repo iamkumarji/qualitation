@@ -1,0 +1,32 @@
+{% load wagtailcore_tags %}
+
+<section class="service-cards">
+    <div class="container">
+        {% if value.heading %}
+        <h2 class="section-heading">{{ value.heading }}</h2>
+        {% endif %}
+        {% if value.subheading %}
+        <div class="section-subheading">
+            {{ value.subheading|richtext }}
+        </div>
+        {% endif %}
+        <div class="cards-grid">
+            {% for card in value.cards %}
+            <div class="service-card">
+                {% if card.icon %}
+                <div class="card-icon">
+                    <i class="fas {{ card.icon }}"></i>
+                </div>
+                {% endif %}
+                <h3 class="card-title">{{ card.title }}</h3>
+                {% if card.description %}
+                <p class="card-description">{{ card.description }}</p>
+                {% endif %}
+                {% if card.link %}
+                <a href="{% pageurl card.link %}" class="card-link">Learn more <i class="fas fa-arrow-right"></i></a>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>

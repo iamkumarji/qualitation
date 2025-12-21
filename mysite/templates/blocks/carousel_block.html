@@ -1,0 +1,70 @@
+{% load wagtailimages_tags wagtailembeds_tags %}
+
+<section class="carousel-section"
+         data-autoplay="{{ value.autoplay }}"
+         data-autoplay-speed="{{ value.autoplay_speed }}"
+         data-transition="{{ value.transition_effect }}">
+    <div class="carousel-container">
+        <div class="carousel-wrapper">
+            {% for slide in value.slides %}
+            <div class="carousel-slide {% if forloop.first %}active{% endif %} transition-{{ value.transition_effect }} {% if not slide.image and slide.slide_type == 'image' %}no-image gradient-slide-{{ forloop.counter }}{% endif %}">
+                {% if slide.slide_type == 'image' and slide.image %}
+                    <div class="slide-image image-fit-{{ slide.image_fit|default:'cover' }}">
+                        {% image slide.image fill-1920x800 as slide_img %}
+                        <img src="{{ slide_img.url }}" alt="{{ slide.heading|default:'Slide' }}">
+                    </div>
+                {% elif slide.slide_type == 'video' and slide.video_url %}
+                    <div class="slide-video">
+                        <iframe
+                            src="{% if 'youtube.com' in slide.video_url or 'youtu.be' in slide.video_url %}https://www.youtube.com/embed/{{ slide.video_url|slice:'-11:' }}?autoplay=1&mute=1&loop=1&playlist={{ slide.video_url|slice:'-11:' }}&controls=0{% elif 'vimeo.com' in slide.video_url %}https://player.vimeo.com/video/{{ slide.video_url|slice:'-9:' }}?autoplay=1&muted=1&loop=1&background=1{% endif %}"
+                            frameborder="0"
+                            allow="autoplay; fullscreen"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                {% endif %}
+
+                <div class="slide-overlay"></div>
+
+                {% if slide.heading or slide.description or slide.button_text %}
+                <div class="slide-content text-{{ slide.text_position }}">
+                    <div class="slide-content-inner">
+                        {% if slide.heading %}
+                        <h2 class="slide-heading">{{ slide.heading }}</h2>
+                        {% endif %}
+                        {% if slide.description %}
+                        <p class="slide-description">{{ slide.description }}</p>
+                        {% endif %}
+                        {% if slide.button_text and slide.button_link %}
+                        <a href="{{ slide.button_link }}" class="slide-button btn btn-primary">
+                            {{ slide.button_text }}
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if value.show_arrows and value.slides|length > 1 %}
+        <button class="carousel-arrow carousel-arrow-prev" aria-label="Previous slide">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <button class="carousel-arrow carousel-arrow-next" aria-label="Next slide">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+        {% endif %}
+
+        {% if value.show_dots and value.slides|length > 1 %}
+        <div class="carousel-dots">
+            {% for slide in value.slides %}
+            <button class="carousel-dot {% if forloop.first %}active{% endif %}"
+                    data-slide="{{ forloop.counter0 }}"
+                    aria-label="Go to slide {{ forloop.counter }}">
+            </button>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</section>

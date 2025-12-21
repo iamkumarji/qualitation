@@ -1,0 +1,33 @@
+{% load wagtailimages_tags wagtailcore_tags %}
+
+{% if value.background_image %}
+    {% image value.background_image original as bg_image %}
+{% endif %}
+
+<section class="hero" {% if bg_image %}style="background-image: url('{{ bg_image.url }}');"{% endif %}>
+    <div class="hero-overlay"></div>
+    <div class="container">
+        <div class="hero-content">
+            <h1 class="hero-heading">{{ value.heading }}</h1>
+            {% if value.subheading %}
+            <div class="hero-subheading">
+                {{ value.subheading|richtext }}
+            </div>
+            {% endif %}
+            <div class="hero-buttons">
+                {% if value.cta_text %}
+                    {% if value.cta_link %}
+                    <a href="{% pageurl value.cta_link %}" class="btn btn-primary">{{ value.cta_text }}</a>
+                    {% else %}
+                    <a href="/contact/" class="btn btn-primary">{{ value.cta_text }}</a>
+                    {% endif %}
+                {% endif %}
+                {% if value.secondary_cta_text and value.secondary_cta_link %}
+                <a href="{{ value.secondary_cta_link }}" class="btn btn-secondary">{{ value.secondary_cta_text }}</a>
+                {% elif value.secondary_cta_text %}
+                <a href="tel:03456006975" class="btn btn-secondary">{{ value.secondary_cta_text }}</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>

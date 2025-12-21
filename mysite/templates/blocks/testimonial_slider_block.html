@@ -1,0 +1,75 @@
+{% load wagtailimages_tags %}
+
+<section class="testimonial-slider-section" data-autoplay="{{ value.autoplay }}" data-speed="{{ value.autoplay_speed }}">
+    <div class="container">
+        {% if value.heading %}
+        <h2 class="section-heading">{{ value.heading }}</h2>
+        {% endif %}
+        {% if value.subheading %}
+        <p class="section-subheading">{{ value.subheading }}</p>
+        {% endif %}
+
+        <div class="testimonial-slider">
+            <div class="testimonial-track">
+                {% for testimonial in value.testimonials %}
+                <div class="testimonial-slide {% if forloop.first %}active{% endif %}">
+                    <div class="testimonial-card">
+                        <div class="testimonial-quote-icon">
+                            <i class="fas fa-quote-left"></i>
+                        </div>
+
+                        {% if testimonial.rating %}
+                        <div class="testimonial-rating">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= testimonial.rating %}
+                                <i class="fas fa-star"></i>
+                                {% else %}
+                                <i class="far fa-star"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <blockquote class="testimonial-text">
+                            {{ testimonial.quote }}
+                        </blockquote>
+
+                        <div class="testimonial-author">
+                            {% if testimonial.author_image %}
+                            <div class="testimonial-author-image">
+                                {% image testimonial.author_image fill-80x80 %}
+                            </div>
+                            {% else %}
+                            <div class="testimonial-author-image testimonial-author-placeholder">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            {% endif %}
+                            <div class="testimonial-author-info">
+                                <div class="testimonial-author-name">{{ testimonial.author }}</div>
+                                {% if testimonial.author_title %}
+                                <div class="testimonial-author-title">{{ testimonial.author_title }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Navigation Arrows -->
+            <button class="testimonial-arrow testimonial-arrow-prev" aria-label="Previous testimonial">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="testimonial-arrow testimonial-arrow-next" aria-label="Next testimonial">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+
+            <!-- Navigation Dots -->
+            <div class="testimonial-dots">
+                {% for testimonial in value.testimonials %}
+                <button class="testimonial-dot {% if forloop.first %}active{% endif %}" data-index="{{ forloop.counter0 }}" aria-label="Go to testimonial {{ forloop.counter }}"></button>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>

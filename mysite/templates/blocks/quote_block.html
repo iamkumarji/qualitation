@@ -1,0 +1,31 @@
+{% load wagtailimages_tags %}
+
+<section class="quote-block">
+    <div class="container">
+        <div class="quote-container">
+            <div class="quote-icon">
+                <i class="fas fa-quote-left"></i>
+            </div>
+            <blockquote class="quote-text">
+                {{ value.quote }}
+            </blockquote>
+            {% if value.author or value.author_title %}
+            <div class="quote-author">
+                {% if value.author_image %}
+                <div class="author-image">
+                    {% image value.author_image fill-80x80 %}
+                </div>
+                {% endif %}
+                <div class="author-info">
+                    {% if value.author %}
+                    <div class="author-name">{{ value.author }}</div>
+                    {% endif %}
+                    {% if value.author_title %}
+                    <div class="author-title">{{ value.author_title }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>

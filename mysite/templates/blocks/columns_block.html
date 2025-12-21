@@ -1,0 +1,13 @@
+{% load wagtailcore_tags %}
+
+<section class="columns-block">
+    <div class="container">
+        <div class="columns-grid columns-{{ value.columns|length }}">
+            {% for column in value.columns %}
+            <div class="column">
+                {{ column.content|richtext }}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>

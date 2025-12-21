@@ -1,0 +1,506 @@
+{% load static wagtailcore_tags wagtailuserbar wagtailimages_tags %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+        {% block title %}
+        {% if page.seo_title %}{{ page.seo_title }}{% else %}{{ page.title }}{% endif %}
+        {% endblock %}
+        {% block title_suffix %}
+        {% wagtail_site as current_site %}
+        {% if current_site and current_site.site_name %} - {{ current_site.site_name }}{% endif %}
+        {% endblock %}
+    </title>
+    {% if page.search_description %}
+    <meta name="description" content="{{ page.search_description }}" />
+    {% endif %}
+
+    {# Force all links in the live preview panel to be opened in a new tab #}
+    {% if request.in_preview_panel %}
+    <base target="_blank">
+    {% endif %}
+
+    {# Google Fonts #}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    {# Global stylesheets #}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    {# Dynamic Theme Colors #}
+    {% if settings.home.ColorThemeSettings %}
+    <style>
+        :root {
+            /* Brand Colors */
+            --primary-color: {{ settings.home.ColorThemeSettings.primary_color }};
+            --secondary-color: {{ settings.home.ColorThemeSettings.secondary_color }};
+            --accent-color: {{ settings.home.ColorThemeSettings.accent_color }};
+
+            /* Navbar Colors (Global Defaults) */
+            --navbar-bg: {{ settings.home.ColorThemeSettings.navbar_background }};
+            --navbar-text: {{ settings.home.ColorThemeSettings.navbar_text_color }};
+            --navbar-hover: {{ settings.home.ColorThemeSettings.navbar_hover_color }};
+            --navbar-active: {{ settings.home.ColorThemeSettings.navbar_active_color }};
+
+            /* Top Navigation Bar Colors */
+            --top-nav-bg: {{ settings.home.ColorThemeSettings.top_nav_background|default:settings.home.ColorThemeSettings.navbar_background }};
+            --top-nav-text: {{ settings.home.ColorThemeSettings.top_nav_text_color|default:settings.home.ColorThemeSettings.navbar_text_color }};
+            --top-nav-hover: {{ settings.home.ColorThemeSettings.top_nav_hover_color|default:settings.home.ColorThemeSettings.navbar_hover_color }};
+
+            /* Middle Navigation Bar Colors */
+            --middle-nav-bg: {{ settings.home.ColorThemeSettings.middle_nav_background|default:settings.home.ColorThemeSettings.navbar_background }};
+            --middle-nav-text: {{ settings.home.ColorThemeSettings.middle_nav_text_color|default:settings.home.ColorThemeSettings.navbar_text_color }};
+            --middle-nav-hover: {{ settings.home.ColorThemeSettings.middle_nav_hover_color|default:settings.home.ColorThemeSettings.navbar_hover_color }};
+
+            /* Bottom Navigation Bar Colors */
+            --bottom-nav-bg: {{ settings.home.ColorThemeSettings.bottom_nav_background|default:settings.home.ColorThemeSettings.navbar_background }};
+            --bottom-nav-text: {{ settings.home.ColorThemeSettings.bottom_nav_text_color|default:settings.home.ColorThemeSettings.navbar_text_color }};
+            --bottom-nav-hover: {{ settings.home.ColorThemeSettings.bottom_nav_hover_color|default:settings.home.ColorThemeSettings.navbar_hover_color }};
+
+            /* Footer Colors */
+            --footer-bg: {{ settings.home.ColorThemeSettings.footer_background }};
+            --footer-text: {{ settings.home.ColorThemeSettings.footer_text_color }};
+            --footer-link: {{ settings.home.ColorThemeSettings.footer_link_color }};
+            --footer-link-hover: {{ settings.home.ColorThemeSettings.footer_link_hover_color }};
+
+            /* Button Colors */
+            --btn-primary-bg: {{ settings.home.ColorThemeSettings.button_primary_bg }};
+            --btn-primary-text: {{ settings.home.ColorThemeSettings.button_primary_text }};
+            --btn-primary-hover: {{ settings.home.ColorThemeSettings.button_primary_hover }};
+            --btn-secondary-bg: {{ settings.home.ColorThemeSettings.button_secondary_bg }};
+            --btn-secondary-text: {{ settings.home.ColorThemeSettings.button_secondary_text }};
+            --btn-secondary-hover: {{ settings.home.ColorThemeSettings.button_secondary_hover }};
+
+            /* Link Colors */
+            --link-color: {{ settings.home.ColorThemeSettings.link_color }};
+            --link-hover: {{ settings.home.ColorThemeSettings.link_hover_color }};
+
+            /* Background Colors */
+            --body-bg: {{ settings.home.ColorThemeSettings.body_background }};
+            --section-bg: {{ settings.home.ColorThemeSettings.section_background }};
+            --border-color: {{ settings.home.ColorThemeSettings.border_color }};
+
+            /* Text Colors */
+            --heading-color: {{ settings.home.ColorThemeSettings.heading_color }};
+            --body-text: {{ settings.home.ColorThemeSettings.body_text_color }};
+        }
+
+        /* Apply theme colors */
+        body {
+            background-color: var(--body-bg);
+            color: var(--body-text);
+        }
+
+        /* Navbar */
+        .navbar {
+            background-color: var(--navbar-bg);
+        }
+
+        .navbar-brand,
+        .navbar-item a,
+        .navbar-search input {
+            color: var(--navbar-text);
+        }
+
+        .navbar-item a:hover,
+        .navbar-item.active a {
+            color: var(--navbar-hover);
+        }
+
+        .navbar-item.active a {
+            border-bottom-color: var(--navbar-active);
+        }
+
+        .dropdown-menu {
+            border-color: var(--border-color);
+        }
+
+        .dropdown-item a:hover {
+            background-color: var(--navbar-hover);
+            color: #ffffff;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--footer-bg);
+            color: var(--footer-text);
+        }
+
+        .footer h4 {
+            color: var(--footer-link);
+        }
+
+        .footer a {
+            color: var(--footer-link);
+        }
+
+        .footer a:hover {
+            color: var(--footer-link-hover);
+        }
+
+        .footer-bottom {
+            border-top-color: var(--border-color);
+        }
+
+        /* Buttons */
+        .btn-primary,
+        .button-primary {
+            background-color: var(--btn-primary-bg);
+            color: var(--btn-primary-text);
+            border-color: var(--btn-primary-bg);
+        }
+
+        .btn-primary:hover,
+        .button-primary:hover {
+            background-color: var(--btn-primary-hover);
+            border-color: var(--btn-primary-hover);
+        }
+
+        .btn-secondary,
+        .button-secondary {
+            background-color: var(--btn-secondary-bg);
+            color: var(--btn-secondary-text);
+            border-color: var(--btn-secondary-bg);
+        }
+
+        .btn-secondary:hover,
+        .button-secondary:hover {
+            background-color: var(--btn-secondary-hover);
+            border-color: var(--btn-secondary-hover);
+        }
+
+        /* Links */
+        a {
+            color: var(--link-color);
+        }
+
+        a:hover {
+            color: var(--link-hover);
+        }
+
+        /* Headings */
+        h1, h2, h3, h4, h5, h6,
+        .heading {
+            color: var(--heading-color);
+        }
+
+        /* Service Cards */
+        .service-card:hover {
+            border-color: var(--primary-color);
+        }
+
+        .service-card i {
+            color: var(--primary-color);
+        }
+
+        /* Hero Section */
+        .hero-section .btn {
+            background-color: var(--btn-primary-bg);
+            color: var(--btn-primary-text);
+        }
+
+        .hero-section .btn:hover {
+            background-color: var(--btn-primary-hover);
+        }
+
+        .hero-section .btn-secondary {
+            background-color: transparent;
+            color: var(--btn-primary-bg);
+            border: 2px solid var(--btn-primary-bg);
+        }
+
+        .hero-section .btn-secondary:hover {
+            background-color: var(--btn-primary-bg);
+            color: var(--btn-primary-text);
+        }
+
+        /* Carousel Navigation */
+        .carousel-arrow {
+            background-color: var(--primary-color);
+        }
+
+        .carousel-arrow:hover {
+            background-color: var(--btn-primary-hover);
+        }
+
+        .carousel-dot.active {
+            background-color: var(--primary-color);
+        }
+
+        /* Accordion */
+        .accordion-header:hover {
+            background-color: var(--body-bg);
+        }
+
+        .accordion-item.active .accordion-header {
+            background-color: var(--primary-color);
+            color: #ffffff;
+        }
+
+        /* Dividers */
+        .divider-solid {
+            border-color: var(--border-color);
+        }
+
+        /* Sections */
+        section {
+            background-color: var(--section-bg);
+        }
+
+        /* Contact Form */
+        .contact-form input,
+        .contact-form textarea {
+            border-color: var(--border-color);
+        }
+
+        .contact-form input:focus,
+        .contact-form textarea:focus {
+            border-color: var(--primary-color);
+        }
+
+        .contact-form button {
+            background-color: var(--btn-primary-bg);
+            color: var(--btn-primary-text);
+        }
+
+        .contact-form button:hover {
+            background-color: var(--btn-primary-hover);
+        }
+
+        /* Quote Block */
+        .quote-block {
+            border-left-color: var(--primary-color);
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            color: var(--navbar-text);
+        }
+
+        /* Navbar active/hover states */
+        @media (min-width: 993px) {
+            .navbar-item.has-dropdown:hover > a {
+                color: var(--navbar-hover);
+            }
+        }
+    </style>
+    {% endif %}
+
+    {% block extra_css %}
+    {# Override this in templates to add extra stylesheets #}
+    {% endblock %}
+</head>
+
+<body class="{% block body_class %}{% endblock %}">
+    {% wagtailuserbar %}
+
+    {# ======== HEADER NAVIGATION (Using Consolidated HeaderMenu) ======== #}
+    {% with header=settings.home.SiteMenuSettings.header_menu %}
+
+    {# Top Navigation Bar #}
+    {% if header and header.top_links.exists or header.phone_number %}
+    <nav class="navbar-top">
+        <div class="container">
+            <div class="navbar-top-content">
+                <ul class="navbar-top-links">
+                    {% for item in header.top_links.all %}
+                    <li class="navbar-top-item">
+                        <a href="{{ item.link }}" {% if item.open_in_new_tab %}target="_blank" rel="noopener"{% endif %}>
+                            {{ item.title }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <div class="navbar-top-right">
+                    {% if header.phone_number %}
+                    <a href="tel:{{ header.phone_number }}" class="phone-link">
+                        <i class="fas fa-phone"></i> {{ header.phone_number }}
+                    </a>
+                    {% endif %}
+                    {% if header.show_price_badge %}
+                    <span class="price-badge">{{ header.price_badge_text }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+    {% endif %}
+
+    {# Middle Navigation Bar #}
+    <nav class="navbar-middle">
+        <div class="container">
+            <div class="navbar-middle-content">
+                {# Logo #}
+                <div class="navbar-logo">
+                    {% if settings.home.NavigationSettings.logo %}
+                        <a href="/">
+                            {% image settings.home.NavigationSettings.logo max-200x80 %}
+                        </a>
+                    {% else %}
+                        <a href="/" class="site-name">{{ current_site.site_name|default:"QSL" }}</a>
+                    {% endif %}
+                </div>
+
+                {# Mobile Menu Toggle #}
+                <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                {# Middle Navigation Links #}
+                <div class="navbar-middle-menu" id="navbarMiddleMenu">
+                    {% if header %}
+                    <ul class="navbar-middle-links">
+                        {% for item in header.main_links.all %}
+                        <li class="navbar-middle-item">
+                            <a href="{{ item.link }}" {% if item.open_in_new_tab %}target="_blank" rel="noopener"{% endif %}>
+                                {{ item.title }}
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+
+                    {# Action Buttons #}
+                    <div class="navbar-middle-actions">
+                        {% if header.show_quote_button %}
+                        <a href="{{ header.quote_button_link|default:'#' }}" class="btn-request-quote">
+                            <i class="fas fa-file-alt"></i> {{ header.quote_button_text }}
+                        </a>
+                        {% endif %}
+                        {% if header.show_portal_button %}
+                        <a href="{{ header.portal_button_link }}" class="btn-client-portal">
+                            <i class="fas fa-lock"></i> {{ header.portal_button_text }}
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    {# Bottom Navigation Bar (ISO Standards) #}
+    {% if header and header.iso_standards.exists %}
+    <nav class="navbar-bottom">
+        <div class="container">
+            <ul class="navbar-bottom-links">
+                {% for item in header.iso_standards.all %}
+                <li class="navbar-bottom-item {% if item.has_dropdown %}has-dropdown{% endif %}">
+                    <a href="{{ item.link }}">
+                        {{ item.title }}
+                        {% if item.has_dropdown %}<i class="fas fa-chevron-down dropdown-icon"></i>{% endif %}
+                    </a>
+                    {% if item.has_dropdown %}
+                    <ul class="dropdown-menu">
+                        {% for subitem in item.dropdown_items.all %}
+                        <li class="dropdown-item">
+                            <a href="{{ subitem.link }}" {% if subitem.open_in_new_tab %}target="_blank" rel="noopener"{% endif %}>
+                                {{ subitem.title }}
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </nav>
+    {% endif %}
+
+    {% endwith %}
+
+    {# Main Content #}
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    {# Footer #}
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                {# Dynamic Footer Menu Columns #}
+                {% if settings.home.FooterSettings.footer_menu %}
+                    {% for column in settings.home.FooterSettings.footer_menu.footer_columns.all %}
+                    <div class="footer-section">
+                        <h4>{{ column.title }}</h4>
+                        <ul>
+                            {% for link in column.column_links.all %}
+                            <li>
+                                <a href="{{ link.link }}" {% if link.open_in_new_tab %}target="_blank" rel="noopener"{% endif %}>
+                                    {{ link.title }}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+
+                {# Contact Information Section #}
+                {% if settings.home.FooterSettings.show_contact_info %}
+                <div class="footer-section">
+                    <h4>Get in Touch</h4>
+                    <ul>
+                        {% if settings.home.FooterSettings.phone %}
+                        <li><i class="fas fa-phone"></i> {{ settings.home.FooterSettings.phone }}</li>
+                        {% endif %}
+                        {% if settings.home.FooterSettings.email %}
+                        <li><i class="fas fa-envelope"></i> {{ settings.home.FooterSettings.email }}</li>
+                        {% endif %}
+                        {% if settings.home.FooterSettings.address %}
+                        <li><i class="fas fa-map-marker-alt"></i> {{ settings.home.FooterSettings.address }}</li>
+                        {% endif %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+
+            {# Footer Bottom #}
+            <div class="footer-bottom">
+                <div class="footer-copyright">
+                    <p>{{ settings.home.FooterSettings.copyright_text|default:"© 2025 All rights reserved" }}</p>
+                </div>
+                <div class="footer-social">
+                    {% if settings.home.FooterSettings.facebook_url %}
+                    <a href="{{ settings.home.FooterSettings.facebook_url }}" target="_blank" rel="noopener" class="social-icon" aria-label="Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    {% endif %}
+                    {% if settings.home.FooterSettings.twitter_url %}
+                    <a href="{{ settings.home.FooterSettings.twitter_url }}" target="_blank" rel="noopener" class="social-icon" aria-label="Twitter">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    {% endif %}
+                    {% if settings.home.FooterSettings.linkedin_url %}
+                    <a href="{{ settings.home.FooterSettings.linkedin_url }}" target="_blank" rel="noopener" class="social-icon" aria-label="LinkedIn">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                    {% endif %}
+                    {% if settings.home.FooterSettings.instagram_url %}
+                    <a href="{{ settings.home.FooterSettings.instagram_url }}" target="_blank" rel="noopener" class="social-icon" aria-label="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    {% endif %}
+                    {% if settings.home.FooterSettings.youtube_url %}
+                    <a href="{{ settings.home.FooterSettings.youtube_url }}" target="_blank" rel="noopener" class="social-icon" aria-label="YouTube">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    {# Global javascript #}
+    <script src="{% static 'js/main.js' %}"></script>
+
+    {% block extra_js %}
+    {# Override this in templates to add extra javascript #}
+    {% endblock %}
+</body>
+</html>

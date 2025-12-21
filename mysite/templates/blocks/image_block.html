@@ -1,0 +1,18 @@
+{% load wagtailimages_tags %}
+
+<section class="image-block">
+    <div class="container">
+        <div class="image-wrapper align-{{ value.alignment }}">
+            {% if value.link %}
+            <a href="{{ value.link }}" target="_blank" rel="noopener">
+                {% image value.image max-1200x800 %}
+            </a>
+            {% else %}
+                {% image value.image max-1200x800 %}
+            {% endif %}
+            {% if value.caption %}
+            <p class="image-caption">{{ value.caption }}</p>
+            {% endif %}
+        </div>
+    </div>
+</section>

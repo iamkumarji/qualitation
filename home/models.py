@@ -862,9 +862,42 @@ class HeaderTopLink(Orderable):
         ordering = ['sort_order']
 
 
-class HeaderMainLink(Orderable):
-    """Main navigation link (ISO Certification, ISO Consultancy, etc.)"""
+class HeaderMainLink(ClusterableModel, Orderable):
+    """Main navigation link with optional dropdown (ISO Certification, ISO Consultancy, etc.)"""
     menu = ParentalKey('HeaderMenu', on_delete=models.CASCADE, related_name='main_links')
+    title = models.CharField(max_length=100)
+    link_page = models.ForeignKey('wagtailcore.Page', null=True, blank=True, on_delete=models.SET_NULL, related_name='+')
+    link_url = models.URLField(blank=True)
+    open_in_new_tab = models.BooleanField(default=False)
+
+    panels = [
+        FieldPanel('title'),
+        PageChooserPanel('link_page'),
+        FieldPanel('link_url'),
+        FieldPanel('open_in_new_tab'),
+        InlinePanel('dropdown_items', label="Dropdown Items"),
+    ]
+
+    @property
+    def link(self):
+        if self.link_page:
+            return self.link_page.url
+        return self.link_url or '#'
+
+    @property
+    def has_dropdown(self):
+        return self.dropdown_items.exists()
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['sort_order']
+
+
+class HeaderMainLinkDropdownItem(Orderable):
+    """Dropdown item for main navigation link"""
+    parent = ParentalKey('HeaderMainLink', on_delete=models.CASCADE, related_name='dropdown_items')
     title = models.CharField(max_length=100)
     link_page = models.ForeignKey('wagtailcore.Page', null=True, blank=True, on_delete=models.SET_NULL, related_name='+')
     link_url = models.URLField(blank=True)

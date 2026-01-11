@@ -396,10 +396,22 @@
                     {% if header %}
                     <ul class="navbar-middle-links">
                         {% for item in header.main_links.all %}
-                        <li class="navbar-middle-item">
+                        <li class="navbar-middle-item {% if item.has_dropdown %}has-dropdown{% endif %}">
                             <a href="{{ item.link }}" {% if item.open_in_new_tab %}target="_blank" rel="noopener"{% endif %}>
                                 {{ item.title }}
+                                {% if item.has_dropdown %}<i class="fas fa-chevron-down dropdown-icon"></i>{% endif %}
                             </a>
+                            {% if item.has_dropdown %}
+                            <ul class="dropdown-menu">
+                                {% for subitem in item.dropdown_items.all %}
+                                <li class="dropdown-item">
+                                    <a href="{{ subitem.link }}" {% if subitem.open_in_new_tab %}target="_blank" rel="noopener"{% endif %}>
+                                        {{ subitem.title }}
+                                    </a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
                         </li>
                         {% endfor %}
                     </ul>

@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================
     // DROPDOWN MENUS (Mobile)
     // ============================================
-    const dropdownItems = document.querySelectorAll('.navbar-item.has-dropdown, .navbar-top-item.has-dropdown, .navbar-bottom-item.has-dropdown');
+    const dropdownItems = document.querySelectorAll('.navbar-item.has-dropdown, .navbar-top-item.has-dropdown, .navbar-middle-item.has-dropdown, .navbar-bottom-item.has-dropdown');
 
     dropdownItems.forEach(item => {
         const link = item.querySelector('a');

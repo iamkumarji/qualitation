@@ -347,12 +347,19 @@
                 </ul>
                 <div class="navbar-top-right">
                     {% if header.phone_number %}
-                    <a href="tel:{{ header.phone_number }}" class="phone-link">
+                    <a href="tel:{{ header.phone_number }}" class="phone-link" style="white-space: nowrap;">
                         <i class="fas fa-phone"></i> {{ header.phone_number }}
                     </a>
                     {% endif %}
-                    {% if header.show_price_badge %}
-                    <span class="price-badge">{{ header.price_badge_text }}</span>
+                    {% if header.show_quote_button %}
+                    <a href="{{ header.quote_button_link|default:'#' }}" class="btn-quote-top" style="background: #f97316; color: #fff; padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 11px; text-decoration: none; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-file-alt" style="font-size: 10px;"></i> Get Free ISO Consultation
+                    </a>
+                    {% endif %}
+                    {% if header.show_portal_button %}
+                    <a href="{{ header.portal_button_link }}" class="btn-client-portal-top" style="background: rgba(255,255,255,0.15); color: #fff; padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 11px; text-decoration: none; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-lock" style="font-size: 10px;"></i> Client Portal
+                    </a>
                     {% endif %}
                 </div>
             </div>
@@ -459,19 +466,6 @@
                     </div>
                     {% endif %}
 
-                    {# Action Buttons #}
-                    <div class="navbar-middle-actions">
-                        {% if header.show_quote_button %}
-                        <a href="{{ header.quote_button_link|default:'#' }}" class="btn-request-quote">
-                            <i class="fas fa-file-alt"></i> {{ header.quote_button_text }}
-                        </a>
-                        {% endif %}
-                        {% if header.show_portal_button %}
-                        <a href="{{ header.portal_button_link }}" class="btn-client-portal">
-                            <i class="fas fa-lock"></i> {{ header.portal_button_text }}
-                        </a>
-                        {% endif %}
-                    </div>
                 </div>
             </div>
         </div>

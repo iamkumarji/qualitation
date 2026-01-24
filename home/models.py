@@ -530,6 +530,164 @@ class FlexiblePage(Page):
         verbose_name_plural = "Flexible Pages"
 
 
+class ArticlePage(Page):
+    """Article/Blog post page for news and resources"""
+
+    # Article metadata
+    date = models.DateField(
+        "Published date",
+        default=models.functions.Now,
+        help_text="Publication date of the article"
+    )
+    intro = models.TextField(
+        "Introduction/Summary",
+        max_length=500,
+        help_text="Brief summary of the article (max 500 characters)"
+    )
+
+    # Article content
+    body = RichTextField(
+        help_text="Main article content"
+    )
+
+    # Optional fields
+    featured_image = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+        help_text="Featured image for the article"
+    )
+
+    author = models.CharField(
+        max_length=100,
+        blank=True,
+        default="Qualitation Team",
+        help_text="Article author name"
+    )
+
+    # Color customization for article card
+    card_gradient_start = models.CharField(
+        max_length=7,
+        default='#667eea',
+        help_text="Starting color for article card gradient (hex color)"
+    )
+    card_gradient_end = models.CharField(
+        max_length=7,
+        default='#764ba2',
+        help_text="Ending color for article card gradient (hex color)"
+    )
+
+    content_panels = Page.content_panels + [
+        FieldPanel('date'),
+        FieldPanel('intro'),
+        FieldPanel('body'),
+        FieldPanel('featured_image'),
+        FieldPanel('author'),
+        MultiFieldPanel([
+            FieldPanel('card_gradient_start', widget=ColorPickerWidget),
+            FieldPanel('card_gradient_end', widget=ColorPickerWidget),
+        ], heading="Card Appearance"),
+    ]
+
+    # Ensure articles appear under Resources or Articles index
+    parent_page_types = ['home.ArticleIndexPage', 'home.HomePage']
+
+    class Meta:
+        verbose_name = "Article"
+        verbose_name_plural = "Articles"
+        ordering = ['-date']  # Most recent first
+
+    def get_context(self, request, *args, **kwargs):
+        context = super().get_context(request, *args, **kwargs)
+        # Add related articles
+        context['related_articles'] = ArticlePage.objects.live().public().exclude(pk=self.pk).order_by('-date')[:3]
+        return context
+
+
+class ArticleIndexPage(Page):
+    """Index page for articles - automatically displays all articles sorted by date"""
+
+    intro = RichTextField(
+        blank=True,
+        help_text="Introduction text for the articles page"
+    )
+
+    # Hero section settings
+    show_hero = models.BooleanField(
+        default=True,
+        help_text="Show hero section at the top"
+    )
+    hero_title = models.CharField(
+        max_length=255,
+        default="ISO Resources & Expert Insights",
+        help_text="Hero section title"
+    )
+    hero_subtitle = models.TextField(
+        blank=True,
+        default="Stay informed with our latest insights, expert opinions, and guidance on ISO standards and quality management.",
+        help_text="Hero section subtitle"
+    )
+
+    # CTA section settings
+    show_cta = models.BooleanField(
+        default=True,
+        help_text="Show call-to-action section at the bottom"
+    )
+    cta_title = models.CharField(
+        max_length=255,
+        default="Need Personalized Guidance?",
+        help_text="CTA section title"
+    )
+    cta_text = models.TextField(
+        blank=True,
+        default="Our expert team is here to help. Get in touch for a free consultation.",
+        help_text="CTA section text"
+    )
+    cta_button_text = models.CharField(
+        max_length=50,
+        default="Contact Us",
+        help_text="CTA button text"
+    )
+    cta_button_link = models.CharField(
+        max_length=255,
+        default="/contact/",
+        help_text="CTA button link (can be relative path like /contact/ or full URL)"
+    )
+
+    content_panels = Page.content_panels + [
+        FieldPanel('intro'),
+        MultiFieldPanel([
+            FieldPanel('show_hero'),
+            FieldPanel('hero_title'),
+            FieldPanel('hero_subtitle'),
+        ], heading="Hero Section"),
+        MultiFieldPanel([
+            FieldPanel('show_cta'),
+            FieldPanel('cta_title'),
+            FieldPanel('cta_text'),
+            FieldPanel('cta_button_text'),
+            FieldPanel('cta_button_link'),
+        ], heading="Call-to-Action Section"),
+    ]
+
+    # Only allow ArticlePage children
+    subpage_types = ['home.ArticlePage']
+
+    class Meta:
+        verbose_name = "Article Index Page"
+        verbose_name_plural = "Article Index Pages"
+
+    def get_context(self, request, *args, **kwargs):
+        context = super().get_context(request, *args, **kwargs)
+        # Get all published articles sorted by date (most recent first)
+        articles = ArticlePage.objects.live().public().child_of(self).order_by('-date')
+        context['articles'] = articles
+        context['article_count'] = articles.count()
+        return context
+
+
 @register_setting
 class NavigationSettings(BaseSiteSetting):
     """Site-wide navigation settings"""

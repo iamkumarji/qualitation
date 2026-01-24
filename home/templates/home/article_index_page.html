@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags %}
+
+{% block body_class %}template-articleindexpage{% endblock %}
+
+{% block content %}
+
+{% if page.show_hero %}
+<!-- Hero Section -->
+<section style="background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); padding: 80px 20px; text-align: center; color: white; position: relative; overflow: hidden;">
+    <!-- Floating shapes -->
+    <div style="position: absolute; top: 10%; left: 5%; width: 100px; height: 100px; background: rgba(255,255,255,0.1); border-radius: 50%; animation: float 6s ease-in-out infinite;"></div>
+    <div style="position: absolute; top: 60%; right: 10%; width: 80px; height: 80px; background: rgba(255,255,255,0.1); border-radius: 50%; animation: float 8s ease-in-out infinite 1s;"></div>
+    <div style="position: absolute; bottom: 15%; left: 15%; width: 60px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 50%; animation: float 7s ease-in-out infinite 2s;"></div>
+
+    <div style="position: relative; z-index: 1; max-width: 1200px; margin: 0 auto;">
+        <div style="display: inline-block; background: rgba(255,255,255,0.2); padding: 8px 20px; border-radius: 50px; margin-bottom: 20px; backdrop-filter: blur(10px); font-size: 0.9em; letter-spacing: 2px;">
+            KNOWLEDGE HUB
+        </div>
+        <h1 style="font-size: 3.5em; margin-bottom: 20px; font-weight: bold;">{{ page.hero_title }}</h1>
+        <p style="font-size: 1.3em; max-width: 800px; margin: 0 auto 30px; opacity: 0.95;">
+            {{ page.hero_subtitle }}
+        </p>
+        <div style="display: flex; gap: 20px; justify-content: center; align-items: center; flex-wrap: wrap;">
+            <div style="background: rgba(255,255,255,0.2); padding: 12px 24px; border-radius: 50px; backdrop-filter: blur(10px);">
+                <strong>{{ article_count }}</strong> Article{% if article_count != 1 %}s{% endif %}
+            </div>
+            <div style="background: rgba(255,255,255,0.2); padding: 12px 24px; border-radius: 50px; backdrop-filter: blur(10px);">
+                Regularly Updated
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Articles Grid -->
+<section style="max-width: 1200px; margin: 80px auto 60px; padding: 0 20px;">
+    {% if page.intro %}
+    <div style="text-align: center; margin-bottom: 50px;">
+        {{ page.intro|richtext }}
+    </div>
+    {% endif %}
+
+    {% if articles %}
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px;">
+        {% for article in articles %}
+        <article style="border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); transition: all 0.3s ease; background: white; display: flex; flex-direction: column;" class="article-card">
+            <!-- Gradient Header -->
+            <div style="background: linear-gradient(135deg, {{ article.card_gradient_start }} 0%, {{ article.card_gradient_end }} 100%); padding: 40px 30px; position: relative;">
+                <div style="position: absolute; top: 20px; right: 20px; width: 60px; height: 60px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: transform 0.3s ease;" class="article-icon">
+                    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                </div>
+                <div style="color: rgba(255,255,255,0.9); font-size: 0.9em; margin-bottom: 10px;">
+                    📅 {{ article.date|date:"d F Y" }}
+                </div>
+                <h3 style="color: white; margin: 0; font-size: 1.4em; line-height: 1.3;">
+                    {{ article.title }}
+                </h3>
+            </div>
+
+            <!-- Content -->
+            <div style="padding: 30px; flex-grow: 1; display: flex; flex-direction: column;">
+                <p style="color: #666; line-height: 1.6; margin-bottom: 25px; flex-grow: 1;">
+                    {{ article.intro }}
+                </p>
+                <a href="{% pageurl article %}" style="color: {{ article.card_gradient_start }}; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; transition: gap 0.3s ease;" class="read-more">
+                    Read Article →
+                </a>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div style="text-align: center; padding: 60px 20px; background: #f8f9fa; border-radius: 15px;">
+        <p style="font-size: 1.2em; color: #666;">No articles available yet. Check back soon!</p>
+    </div>
+    {% endif %}
+</section>
+
+{% if page.show_cta %}
+<!-- CTA Section -->
+<section style="max-width: 1200px; margin: 80px auto 60px; padding: 0 20px;">
+    <div style="background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%); padding: 60px 40px; border-radius: 15px; text-align: center; color: white;">
+        <div style="margin-bottom: 20px; font-size: 2.5em;">💬</div>
+        <h2 style="font-size: 2.2em; margin-bottom: 20px; color: white;">{{ page.cta_title }}</h2>
+        <p style="font-size: 1.2em; margin-bottom: 30px; opacity: 0.95;">
+            {{ page.cta_text }}
+        </p>
+        <a href="{{ page.cta_button_link }}" style="background: white; color: #1e3a5f; padding: 15px 40px; border-radius: 50px; text-decoration: none; font-size: 1.1em; display: inline-block; font-weight: 600; transition: all 0.3s ease;" class="cta-button">
+            {{ page.cta_button_text }}
+        </a>
+    </div>
+</section>
+{% endif %}
+
+<style>
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+}
+
+.article-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+}
+
+.article-card:hover .article-icon {
+    transform: rotate(15deg);
+}
+
+.article-card:hover .read-more {
+    gap: 10px;
+}
+
+.cta-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+</style>
+
+{% endblock %}

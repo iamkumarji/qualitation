@@ -1857,3 +1857,219 @@ class ColorThemeSettings(BaseSiteSetting):
 
     class Meta:
         verbose_name = "Color Theme Settings"
+
+
+@register_setting
+class EmailSettings(BaseSiteSetting):
+    """Email configuration for contact forms and notifications"""
+
+    # SMTP Configuration
+    email_backend = models.CharField(
+        max_length=255,
+        default='django.core.mail.backends.smtp.EmailBackend',
+        help_text="Email backend to use (usually SMTP)"
+    )
+
+    smtp_host = models.CharField(
+        max_length=255,
+        default='smtp.mail.yahoo.com',
+        verbose_name="SMTP Host",
+        help_text="SMTP server address (e.g., smtp.mail.yahoo.com, smtp.gmail.com)"
+    )
+
+    smtp_port = models.IntegerField(
+        default=587,
+        verbose_name="SMTP Port",
+        help_text="SMTP port (587 for TLS, 465 for SSL)"
+    )
+
+    use_tls = models.BooleanField(
+        default=True,
+        verbose_name="Use TLS",
+        help_text="Enable TLS encryption (recommended for port 587)"
+    )
+
+    use_ssl = models.BooleanField(
+        default=False,
+        verbose_name="Use SSL",
+        help_text="Enable SSL encryption (recommended for port 465)"
+    )
+
+    # Authentication
+    smtp_username = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name="SMTP Username / Email",
+        help_text="Your email address (e.g., yourname@yourdomain.com)"
+    )
+
+    smtp_password = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name="SMTP Password / App Password",
+        help_text="For Yahoo: Use app-specific password. For Gmail: Use app password"
+    )
+
+    # Email Addresses
+    from_email = models.EmailField(
+        blank=True,
+        verbose_name="From Email",
+        help_text="Email address that appears as sender"
+    )
+
+    contact_form_recipient = models.EmailField(
+        blank=True,
+        verbose_name="Contact Form Recipient",
+        help_text="Email address where contact form submissions will be sent"
+    )
+
+    # Additional Settings
+    send_confirmation_email = models.BooleanField(
+        default=True,
+        verbose_name="Send Confirmation to User",
+        help_text="Send a thank you email to form submitters"
+    )
+
+    # Email Test
+    test_email = models.EmailField(
+        blank=True,
+        verbose_name="Test Email Address",
+        help_text="Send a test email to this address to verify settings"
+    )
+
+    # Status and Help
+    is_configured = models.BooleanField(
+        default=False,
+        editable=False,
+        help_text="Automatically set when all required fields are filled"
+    )
+
+    last_test_date = models.DateTimeField(
+        null=True,
+        blank=True,
+        editable=False,
+        verbose_name="Last Tested",
+        help_text="Date when test email was last sent"
+    )
+
+    panels = [
+        MultiFieldPanel([
+            FieldPanel('smtp_host'),
+            FieldPanel('smtp_port'),
+            FieldPanel('use_tls'),
+            FieldPanel('use_ssl'),
+        ], heading="📧 SMTP Server Settings",
+           help_text="Configure your email server settings"),
+
+        MultiFieldPanel([
+            FieldPanel('smtp_username'),
+            FieldPanel('smtp_password'),
+        ], heading="🔐 Authentication",
+           help_text="Enter your email credentials"),
+
+        MultiFieldPanel([
+            FieldPanel('from_email'),
+            FieldPanel('contact_form_recipient'),
+        ], heading="✉️ Email Addresses",
+           help_text="Configure sender and recipient addresses"),
+
+        MultiFieldPanel([
+            FieldPanel('send_confirmation_email'),
+        ], heading="⚙️ Options"),
+
+        MultiFieldPanel([
+            FieldPanel('test_email'),
+        ], heading="🧪 Test Configuration",
+           help_text="Enter an email address and save to send a test email"),
+    ]
+
+    def save(self, *args, **kwargs):
+        # Ensure TLS and SSL are mutually exclusive
+        if self.use_tls and self.use_ssl:
+            # If both are True, prefer TLS and disable SSL
+            self.use_ssl = False
+
+        # Check if all required fields are configured
+        self.is_configured = bool(
+            self.smtp_host and
+            self.smtp_username and
+            self.smtp_password and
+            self.from_email and
+            self.contact_form_recipient
+        )
+
+        # Send test email if test_email is provided
+        if self.test_email and self.is_configured:
+            from django.core.mail import send_mail
+            from django.utils import timezone
+
+            try:
+                # Temporarily set Django email settings
+                from django.conf import settings
+                old_backend = getattr(settings, 'EMAIL_BACKEND', None)
+                old_host = getattr(settings, 'EMAIL_HOST', None)
+                old_port = getattr(settings, 'EMAIL_PORT', None)
+                old_use_tls = getattr(settings, 'EMAIL_USE_TLS', None)
+                old_use_ssl = getattr(settings, 'EMAIL_USE_SSL', None)
+                old_user = getattr(settings, 'EMAIL_HOST_USER', None)
+                old_password = getattr(settings, 'EMAIL_HOST_PASSWORD', None)
+                old_from = getattr(settings, 'DEFAULT_FROM_EMAIL', None)
+
+                # Apply current settings
+                settings.EMAIL_BACKEND = self.email_backend
+                settings.EMAIL_HOST = self.smtp_host
+                settings.EMAIL_PORT = self.smtp_port
+                settings.EMAIL_USE_TLS = self.use_tls
+                settings.EMAIL_USE_SSL = self.use_ssl
+                settings.EMAIL_HOST_USER = self.smtp_username
+                settings.EMAIL_HOST_PASSWORD = self.smtp_password
+                settings.DEFAULT_FROM_EMAIL = self.from_email
+
+                # Send test email
+                send_mail(
+                    subject='✅ Email Configuration Test - Success!',
+                    message=f'''This is a test email from your Django/Wagtail application.
+
+Your email settings are configured correctly!
+
+Configuration Details:
+- SMTP Host: {self.smtp_host}
+- SMTP Port: {self.smtp_port}
+- TLS: {"Enabled" if self.use_tls else "Disabled"}
+- SSL: {"Enabled" if self.use_ssl else "Disabled"}
+- From Email: {self.from_email}
+- Test sent at: {timezone.now().strftime("%Y-%m-%d %H:%M:%S")}
+
+Your contact form is ready to receive submissions!
+''',
+                    from_email=self.from_email,
+                    recipient_list=[self.test_email],
+                    fail_silently=False,
+                )
+
+                self.last_test_date = timezone.now()
+
+                # Restore old settings
+                if old_backend: settings.EMAIL_BACKEND = old_backend
+                if old_host: settings.EMAIL_HOST = old_host
+                if old_port: settings.EMAIL_PORT = old_port
+                if old_use_tls is not None: settings.EMAIL_USE_TLS = old_use_tls
+                if old_use_ssl is not None: settings.EMAIL_USE_SSL = old_use_ssl
+                if old_user: settings.EMAIL_HOST_USER = old_user
+                if old_password: settings.EMAIL_HOST_PASSWORD = old_password
+                if old_from: settings.DEFAULT_FROM_EMAIL = old_from
+
+            except Exception as e:
+                # Don't prevent saving if test email fails
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.error(f'Test email failed: {str(e)}')
+
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        status = "✅ Configured" if self.is_configured else "⚠️ Not Configured"
+        return f"Email Settings - {status}"
+
+    class Meta:
+        verbose_name = "Email Settings"
